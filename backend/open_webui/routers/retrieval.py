@@ -349,6 +349,7 @@ async def get_rag_config(request: Request, user=Depends(get_admin_user)):
         "status": True,
         "pdf_extract_images": request.app.state.config.PDF_EXTRACT_IMAGES,
         "enable_google_drive_integration": request.app.state.config.ENABLE_GOOGLE_DRIVE_INTEGRATION,
+        "enable_full_content": request.app.state.config.ENABLE_FULL_CONTENT,
         "content_extraction": {
             "engine": request.app.state.config.CONTENT_EXTRACTION_ENGINE,
             "tika_server_url": request.app.state.config.TIKA_SERVER_URL,
@@ -451,6 +452,7 @@ class WebConfig(BaseModel):
 class ConfigUpdateForm(BaseModel):
     pdf_extract_images: Optional[bool] = None
     enable_google_drive_integration: Optional[bool] = None
+    enable_full_content: Optional[bool] = None
     file: Optional[FileConfig] = None
     content_extraction: Optional[ContentExtractionConfig] = None
     chunk: Optional[ChunkParamUpdateForm] = None
@@ -472,6 +474,12 @@ async def update_rag_config(
         form_data.enable_google_drive_integration
         if form_data.enable_google_drive_integration is not None
         else request.app.state.config.ENABLE_GOOGLE_DRIVE_INTEGRATION
+    )
+
+    request.app.state.config.ENABLE_FULL_CONTENT = (
+        form_data.enable_full_content
+        if form_data.enable_full_content is not None
+        else request.app.state.config.ENABLE_FULL_CONTENT
     )
 
     if form_data.file is not None:
@@ -557,6 +565,7 @@ async def update_rag_config(
     return {
         "status": True,
         "pdf_extract_images": request.app.state.config.PDF_EXTRACT_IMAGES,
+        "enable_full_content": request.app.state.config.ENABLE_FULL_CONTENT,
         "file": {
             "max_size": request.app.state.config.FILE_MAX_SIZE,
             "max_count": request.app.state.config.FILE_MAX_COUNT,

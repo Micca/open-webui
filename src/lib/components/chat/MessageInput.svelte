@@ -43,6 +43,7 @@
 	import PhotoSolid from '../icons/PhotoSolid.svelte';
 	import Photo from '../icons/Photo.svelte';
 	import CommandLine from '../icons/CommandLine.svelte';
+	import { getRAGConfig } from '$lib/apis/retrieval';
 
 	const i18n = getContext('i18n');
 
@@ -89,6 +90,7 @@
 	let commandsElement;
 
 	let inputFiles;
+	let fullContext = false;
 	let dragged = false;
 
 	let user = null;
@@ -275,7 +277,7 @@
 				};
 				reader.readAsDataURL(file);
 			} else {
-				uploadFileHandler(file);
+				uploadFileHandler(file, fullContext);
 			}
 		});
 	};
@@ -334,6 +336,12 @@
 		dropzoneElement?.addEventListener('dragover', onDragOver);
 		dropzoneElement?.addEventListener('drop', onDrop);
 		dropzoneElement?.addEventListener('dragleave', onDragLeave);
+
+		const res = await getRAGConfig(localStorage.token);
+
+		if (res) {
+			fullContext = res.enable_full_content;
+		}
 	});
 
 	onDestroy(() => {

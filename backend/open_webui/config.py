@@ -1398,6 +1398,11 @@ PGVECTOR_INITIALIZE_MAX_VECTOR_LENGTH = int(
 # Information Retrieval (RAG)
 ####################################
 
+ENABLE_FULL_CONTENT = PersistentConfig(
+    "ENABLE_FULL_CONTENT",
+    "full_content.enable",
+    os.getenv("ENABLE_FULL_CONTENT", "False").lower() == "true",
+)
 
 # If configured, Google Drive will be available as an upload option.
 ENABLE_GOOGLE_DRIVE_INTEGRATION = PersistentConfig(

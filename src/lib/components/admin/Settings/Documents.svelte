@@ -47,6 +47,8 @@
 	let fileMaxSize = null;
 	let fileMaxCount = null;
 
+	let enableFullContent = false;
+
 	let contentExtractionEngine = 'default';
 	let tikaServerUrl = '';
 	let showTikaServerUrl = false;
@@ -178,6 +180,7 @@
 		const res = await updateRAGConfig(localStorage.token, {
 			pdf_extract_images: pdfExtractImages,
 			enable_google_drive_integration: enableGoogleDriveIntegration,
+			enable_full_content: enableFullContent,
 			file: {
 				max_size: fileMaxSize === '' ? null : fileMaxSize,
 				max_count: fileMaxCount === '' ? null : fileMaxCount
@@ -250,6 +253,7 @@
 			fileMaxCount = res?.file.max_count ?? '';
 
 			enableGoogleDriveIntegration = res.enable_google_drive_integration;
+			enableFullContent = res.enable_full_content;
 		}
 	});
 </script>
@@ -553,6 +557,31 @@
 					</div>
 				</div>
 			{/if}
+		</div>
+
+		<hr class=" dark:border-gray-850" />
+
+		<div class="text-sm font-medium mb-1">{$i18n.t('Retrieval Mode')}</div>
+
+		<div class="">
+			<div class="flex justify-between items-center text-xs">
+				<div class="text-xs font-medium">
+						{#if enableFullContent}
+							Using Entire Document
+						{:else}
+							Using Focused Retrieval
+						{/if}
+				</div>
+				<Tooltip
+					content={enableFullContent
+						? 'Inject the entire document as context for comprehensive processing, this is recommended for complex queries.'
+						: 'Default to segmented retrieval for focused and relevant content extraction, this is recommended for most cases.'}
+				>
+					<Switch
+							bind:state={enableFullContent}
+					/>
+				</Tooltip>
+			</div>
 		</div>
 
 		<hr class=" dark:border-gray-850" />
